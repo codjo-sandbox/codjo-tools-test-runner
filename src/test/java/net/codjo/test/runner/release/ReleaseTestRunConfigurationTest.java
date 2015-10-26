@@ -1,4 +1,6 @@
 package net.codjo.test.runner.release;
+
+import com.intellij.openapi.command.impl.DummyProject;
 import org.junit.Assert;
 import org.junit.Test;
 /**
@@ -7,7 +9,7 @@ import org.junit.Test;
 public class ReleaseTestRunConfigurationTest {
     @Test
     public void testTokenParameters() throws Exception {
-        ReleaseTestRunConfiguration config = new ReleaseTestRunConfiguration(mockedValue(), null, "nn");
+        ReleaseTestRunConfiguration config = new ReleaseTestRunConfiguration(mockedValue(), DummyProject.getInstance(), "nn");
         config.setVMParameters("arg1 arg2 arg3");
         Assert.assertArrayEquals("", new String[]{"arg1", "arg2", "arg3"}, config.getVmParameterAsArray());
     }
@@ -15,7 +17,7 @@ public class ReleaseTestRunConfigurationTest {
 
     @Test
     public void testTokenParametersNull() throws Exception {
-        ReleaseTestRunConfiguration config = new ReleaseTestRunConfiguration(mockedValue(), null, "nn");
+        ReleaseTestRunConfiguration config = new ReleaseTestRunConfiguration(mockedValue(), DummyProject.getInstance(), "nn");
         config.setVMParameters(null);
         Assert.assertNull(config.getVmParameterAsArray());
     }

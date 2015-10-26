@@ -51,11 +51,11 @@ public class ReleaseTestRunProfileState extends JavaCommandLineState {
 
 
     private Sdk determineProjectJDK() {
-        return ProjectRootManager.getInstance(getConfig().getProject()).getProjectJdk();
+        return ProjectRootManager.getInstance(getConfig().getProject()).getProjectSdk();
     }
 
 
     private ReleaseTestRunConfiguration getConfig() {
-        return (ReleaseTestRunConfiguration)getRunnerSettings().getRunProfile();
+        return (ReleaseTestRunConfiguration) getEnvironment().getRunnerAndConfigurationSettings().getConfiguration();
     }
 }

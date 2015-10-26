@@ -13,26 +13,14 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import org.jetbrains.annotations.NotNull;
 /**
  * Editeur graphique permettant de parametrer un {@link ReleaseTestRunConfiguration}.
  */
@@ -58,7 +46,8 @@ class ReleaseTestRunConfigurationEditor extends SettingsEditor<ReleaseTestRunCon
     protected void applyEditorTo(ReleaseTestRunConfiguration configuration) {
         configuration.setReleaseTestFileName(currentEditor.getFileName().getText());
         configuration.setVMParameters(currentEditor.getVmParameters().getText());
-        configuration.setTargetModule(((Module)currentEditor.getModules().getSelectedItem()));
+        Module selectedItem = (Module) currentEditor.getModules().getSelectedItem();
+        configuration.setTargetModuleName((selectedItem == null) ? null : selectedItem.getName());
     }
 
 
@@ -111,7 +100,7 @@ class ReleaseTestRunConfigurationEditor extends SettingsEditor<ReleaseTestRunCon
                     false,
                     false,
                     false,
-                    false), project);
+                    false), project, null);
         VirtualFile[] virtualFiles = fileChooser.choose(null, project);
         if (virtualFiles.length != 0) {
             currentEditor.getFileName().setText(virtualFiles[0].getPath());

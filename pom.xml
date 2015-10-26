@@ -14,61 +14,67 @@
     <groupId>net.codjo.tools</groupId>
     <artifactId>codjo-tools-test-runner</artifactId>
     <version>7.0-SNAPSHOT</version>
+
+    <properties>
+        <!--<intellij-lib-path>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib</intellij-lib-path>-->
+        <intellij-lib-path>C:\dev\user\tools\IntelliJ-IC-14.1.5\lib</intellij-lib-path>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>idea</artifactId>
             <scope>system</scope>
-            <systemPath>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib/idea.jar</systemPath>
+            <systemPath>${intellij-lib-path}/idea.jar</systemPath>
             <version>10.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>idea-openapi</artifactId>
             <scope>system</scope>
-            <systemPath>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib/openapi.jar</systemPath>
+            <systemPath>${intellij-lib-path}/openapi.jar</systemPath>
             <version>10.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>idea-extensions</artifactId>
             <scope>system</scope>
-            <systemPath>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib/extensions.jar</systemPath>
+            <systemPath>${intellij-lib-path}/extensions.jar</systemPath>
             <version>10.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>idea-jdom</artifactId>
             <scope>system</scope>
-            <systemPath>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib/jdom.jar</systemPath>
+            <systemPath>${intellij-lib-path}/jdom.jar</systemPath>
             <version>10.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>idea-trove4j</artifactId>
             <scope>system</scope>
-            <systemPath>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib/trove4j.jar</systemPath>
+            <systemPath>${intellij-lib-path}/trove4j.jar</systemPath>
             <version>10.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>idea-annotations</artifactId>
             <scope>system</scope>
-            <systemPath>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib/annotations.jar</systemPath>
+            <systemPath>${intellij-lib-path}/annotations.jar</systemPath>
             <version>10.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>idea-util</artifactId>
             <scope>system</scope>
-            <systemPath>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib/util.jar</systemPath>
+            <systemPath>${intellij-lib-path}/util.jar</systemPath>
             <version>10.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>idea-icons</artifactId>
             <scope>system</scope>
-            <systemPath>C:/INTELLIJ/IntelliJ-IU-10.0.3/lib/icons.jar</systemPath>
+            <systemPath>${intellij-lib-path}/icons.jar</systemPath>
             <version>10.5.1</version>
         </dependency>
 

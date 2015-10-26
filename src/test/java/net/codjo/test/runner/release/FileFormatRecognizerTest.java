@@ -4,18 +4,42 @@
  * Common Apache License 2.0
  */
 package net.codjo.test.runner.release;
+
+import com.intellij.openapi.util.io.FileUtil;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
 import java.io.File;
 import java.io.StringReader;
 import java.net.URL;
-import junit.framework.TestCase;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 /**
  * Classe de test de {@link FileFormatRecognizer}.
  */
-public class FileFormatRecognizerTest extends TestCase {
+public class FileFormatRecognizerTest {
     private FileFormatRecognizer recognizer;
-    private File tempBadDirectory;
+
+    @Rule
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
 
+    @Test
+    public void test_isReleaseTestFileFormat_ok()
+          throws Exception {
+        assertTrue("Un contenu ReleaseTest",
+                   recognizer.isReleaseTestFileFormat(
+                         new StringReader("...<release-test name='MyTest' ...")));
+
+        assertTrue("Un fichier au format ReleaseTest",
+                   recognizer.isReleaseTestFileFormat(toPath("ReleaseTestFile.xml")));
+    }
+
+    @Test
     public void test_isReleaseTestFileFormat_nok()
           throws Exception {
         assertFalse("Un fichier introuvable n'est pas un ReleaseTest",
@@ -29,6 +53,7 @@ public class FileFormatRecognizerTest extends TestCase {
     }
 
 
+    @Test
     public void test_isReleaseTestFile_ok() throws Exception {
         assertTrue("Un repertoire vide n'est pas un répertoire de ReleaseTest",
                    recognizer.isReleaseTestFile(getDirectory()));
@@ -37,41 +62,40 @@ public class FileFormatRecognizerTest extends TestCase {
     }
 
 
-    public void test_isReleaseTestFile_nok() throws Exception {
+    @Test
+    public void test_isReleaseTestFile_unknownFile() throws Exception {
         assertFalse("Un fichier introuvable n'est pas un ReleaseTest",
                     recognizer.isReleaseTestFile("c:/unknown.file"));
+    }
+
+
+    @Test
+    public void test_isReleaseTestFile_emptyDirectory() throws Exception {
+        File tempBadDirectory = tempFolder.newFolder("tempBadDirectory");
+        File.createTempFile("pasTest", ".xml", tempBadDirectory);
 
         assertFalse("Un repertoire vide n'est pas un répertoire de ReleaseTest",
                     recognizer.isReleaseTestFile(tempBadDirectory.getAbsolutePath()));
     }
 
 
-    public void test_isReleaseTestFileFormat_ok()
-          throws Exception {
-        assertTrue("Un contenu ReleaseTest",
-                   recognizer.isReleaseTestFileFormat(
-                         new StringReader("...<release-test name='MyTest' ...")));
+    @Test
+    public void test_isReleaseTestFile_subDirectory_oneValidFile() throws Exception {
+        String dir1 = "dir1";
+        String dir2 = "dir2";
+        File dir2File = tempFolder.newFolder(dir1, dir2);
+        File file1 = new File(dir2File, "file1.xml");
+        FileUtil.copy(getReleaseTestFile(), file1);
 
-        assertTrue("Un fichier au format ReleaseTest",
-                   recognizer.isReleaseTestFileFormat(toPath("ReleaseTestFile.xml")));
+        assertTrue("A ReleaseTest file must be searched in sub directories",
+                    recognizer.isReleaseTestFile(tempFolder.getRoot().getAbsolutePath()));
     }
 
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         recognizer = new FileFormatRecognizer();
-        tempBadDirectory = new File(System.getProperty("java.io.tmpdir"), "tempBadDirectory");
-        tempBadDirectory.mkdirs();
-        File.createTempFile("pasTest", ".xml", tempBadDirectory);
     }
-
-
-    @Override
-    protected void tearDown() throws Exception {
-        new File(tempBadDirectory.getAbsolutePath(), "pasTest.xml").delete();
-        tempBadDirectory.delete();
-    }
-
 
     private String toPath(String name) {
         URL resource = getClass().getResource(name);
@@ -80,7 +104,12 @@ public class FileFormatRecognizerTest extends TestCase {
     }
 
 
+    private File getReleaseTestFile() {
+        return new File(toPath("ReleaseTestFile.xml"));
+    }
+
+
     private String getDirectory() {
-        return new File(toPath("ReleaseTestFile.xml")).getParent();
+        return getReleaseTestFile().getParent();
     }
 }

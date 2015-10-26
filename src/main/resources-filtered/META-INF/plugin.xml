@@ -15,6 +15,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <configurationType implementation="net.codjo.test.runner.release.ReleaseTestRunConfigurationType"/>
+        <runConfigurationProducer implementation="net.codjo.test.runner.release.ReleaseTestConfigurationProducer"/>
     </extensions>
 
 </idea-plugin>

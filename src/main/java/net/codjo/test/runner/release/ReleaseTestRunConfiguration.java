@@ -1,11 +1,7 @@
 package net.codjo.test.runner.release;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ParametersList;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RuntimeConfiguration;
-import com.intellij.execution.configurations.RuntimeConfigurationException;
+import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -16,12 +12,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
-import java.io.File;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ReleaseTestRunConfiguration extends RuntimeConfiguration {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static net.codjo.test.runner.release.ReleaseTestConfigurationProducer.MODULE_NAME_SUFFIX;
+
+public class ReleaseTestRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule> {
     private static final String FILE_ATTRIBUTE = "file";
     private static final String MODULE_ATTRIBUTE = "module";
     private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
@@ -29,13 +30,13 @@ public class ReleaseTestRunConfiguration extends RuntimeConfiguration {
     private String releaseTestFileName;
     private String vmParameters;
     private String[] vmParameterList;
-    private Module targetModule;
+    private String targetModuleName;
 
 
     public ReleaseTestRunConfiguration(ReleaseTestConfigurationFactory factory,
                                        Project project,
                                        String name) {
-        super(name, project, factory);
+        super(name, new JavaRunConfigurationModule(project, true), factory);
     }
 
 
@@ -53,7 +54,7 @@ public class ReleaseTestRunConfiguration extends RuntimeConfiguration {
         String fileAttribute = JDOMExternalizer.readString(element, FILE_ATTRIBUTE);
         setReleaseTestFileName(fileAttribute);
 
-        setTargetModule(ModuleManager.getInstance(getProject()).findModuleByName(moduleName));
+        setTargetModuleName(moduleName);
     }
 
 
@@ -90,9 +91,13 @@ public class ReleaseTestRunConfiguration extends RuntimeConfiguration {
 
     @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
-        if (targetModule == null) {
+        if (targetModuleName == null) {
             throw new RuntimeConfigurationException("Bad target module", "Bad Module");
         }
+        if (!isValidModule(getTargetModule())) {
+            throw new RuntimeConfigurationException("Bad target module", "Bad Module Type");
+        }
+
         if (releaseTestFileName == null
             || "".equals(releaseTestFileName)
             || !new File(releaseTestFileName).exists()) {
@@ -115,17 +120,17 @@ public class ReleaseTestRunConfiguration extends RuntimeConfiguration {
 
 
     public Module getTargetModule() {
-        return targetModule;
+        return ModuleManager.getInstance(getProject()).findModuleByName(targetModuleName);
     }
 
 
-    public void setTargetModule(Module targetModule) {
-        this.targetModule = targetModule;
+    public void setTargetModuleName(String targetModuleName) {
+        this.targetModuleName = targetModuleName;
     }
 
 
     private String getTargetModuleName() {
-        return (getTargetModule() != null ? getTargetModule().getName() : null);
+        return targetModuleName;
     }
 
 
@@ -148,4 +153,21 @@ public class ReleaseTestRunConfiguration extends RuntimeConfiguration {
     public String[] getVmParameterAsArray() {
         return vmParameterList;
     }
+
+    @Override
+    public Collection<Module> getValidModules() {
+        Collection<Module> validModules = new ArrayList<Module>(1);
+        for (Module module : getAllModules()) {
+            if (isValidModule(module)) {
+                validModules.add(module);
+            }
+        }
+        return validModules;
+    }
+
+    static boolean isValidModule(Module module) {
+        return (module != null) && module.getName().endsWith(MODULE_NAME_SUFFIX);
+    }
+
+
 }
