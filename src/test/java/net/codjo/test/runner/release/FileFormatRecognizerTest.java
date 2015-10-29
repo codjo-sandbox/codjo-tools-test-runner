@@ -83,7 +83,8 @@ public class FileFormatRecognizerTest {
     public void test_isReleaseTestFile_subDirectory_oneValidFile() throws Exception {
         String dir1 = "dir1";
         String dir2 = "dir2";
-        File dir2File = tempFolder.newFolder(dir1, dir2);
+        File dir1File = tempFolder.newFolder(dir1);
+        File dir2File = tempFolder.newFolder(dir1 + File.separator + dir2);
         File file1 = new File(dir2File, "file1.xml");
         FileUtil.copy(getReleaseTestFile(), file1);
 
